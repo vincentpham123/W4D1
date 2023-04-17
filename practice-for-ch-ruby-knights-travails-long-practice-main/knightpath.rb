@@ -22,11 +22,11 @@ class KnightPathFinder
 
     def new_move_positions(pos)
         result = []
-        valid_moves = KnightPathFinder.valid_moves(pos)
-        valid_moves.each do |pos|
-            if !@considered_positions.include?(pos)
-                @considered_positions<< pos
-                result << pos
+        moves = KnightPathFinder.valid_moves(pos)
+        moves.each do |pos1|
+            if !@considered_positions.include?(pos1)
+                @considered_positions<< pos1
+                result << pos1
             end
         end
         result
@@ -43,12 +43,53 @@ class KnightPathFinder
             moves.each do |next_move|
                 next_node = PolyTreeNode.new(next_move)
                 queue << next_node
+              
                 check.add_child(next_node)
             end
         end
     end
+    def trace_path_back(node)
+        path =[]
+        queue=[node]
+        until queue.empty?
+            next_level =  queue.shift
+            path << next_level.value
+            if !next_level.parent.nil?
+                queue << next_level.parent
+            end
+        end
+        path.reverse
+
+    end
+        
+    def find_path_bfs(end_pos)
+        queue = [root_node]
+        until queue.empty?
+            check = queue.shift
+            if check.value == end_pos
+                return check
+            else
+                check.children.each do |child|
+                    queue << child 
+                end
+            end
+        end
+        nil
+
+    end
+
+
+    def find_path_dfs(end_pos)
+        root_node.dfs(end_pos)  
+
+    end
+
 end
 
+test= KnightPathFinder.new([0,0])
+test.build_move_tree
+test_bfs = test.find_path_bfs([6,2])
+p test.trace_path_back(test_bfs)
 
         
 
